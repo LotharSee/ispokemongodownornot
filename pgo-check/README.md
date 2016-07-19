@@ -7,8 +7,8 @@
 - Run a container the first time `docker run -it --name pgo-check --env-file ./env pgo-check`
 - It went well? Now you can just restart the container to run the check again `docker start -i pgo-check`
 - Want to report it periodically? Use `docker run --restart=always` with the env variable `CONTAINER_LIFETIME`.
-This way, the container will restart and run every `CONTAINER_LIFETIME` seconds.
-
+This way, the container will restart and run every `CONTAINER_LIFETIME` seconds. Full command:
+`docker run -d --name pgo-check --env-file ./env --restart=always pgo-check`
 
 
 ## Contributors
