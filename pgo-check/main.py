@@ -52,10 +52,16 @@ def main():
     except Exception:
         logging.error("Failed to get session")
 
+    profile = None
     # If it succeed, get the profile
     if session:
-        profile = session.getProfile()
-        logging.info("Properly logged as %s", profile.local_player.username)
+        try:
+            profile = session.getProfile()
+            logging.info("Properly logged as %s", profile.local_player.username)
+        except Exception:
+            logging.error("Failed to get the profile")
+
+    if profile:
         elapsed = time.time() - start
 
         dog.ServiceCheck.check(
