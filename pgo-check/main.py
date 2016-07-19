@@ -10,7 +10,7 @@ from pogo import api
 
 
 AUTH = os.environ.get('PGO_AUTH')
-EMAIL = os.environ.get('PGO_EMAIL')
+USERNAME = os.environ.get('PGO_USERNAME')
 PASSWORD = os.environ.get('PGO_PASSWORD')
 LOCATION = os.environ.get('PGO_LOCATION')
 
@@ -37,7 +37,7 @@ def setupLogger():
 
 def main():
     """Report to datadog the state of the Pokemon GO authentication with Google Auth"""
-    if not (AUTH and EMAIL and PASSWORD and LOCATION):
+    if not (AUTH and USERNAME and PASSWORD and LOCATION):
         return
 
     setupLogger()
@@ -50,9 +50,9 @@ def main():
     session = None
     try:
         if AUTH == 'ptc':
-            session = api.createPTCSession(EMAIL, PASSWORD, LOCATION)
+            session = api.createPTCSession(USERNAME, PASSWORD, LOCATION)
         elif AUTH == 'google':
-            session = api.createGoogleSession(EMAIL, PASSWORD, LOCATION)
+            session = api.createGoogleSession(USERNAME, PASSWORD, LOCATION)
     except Exception:
         logging.error("Failed to get session")
 
