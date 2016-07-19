@@ -20,6 +20,10 @@ DD_OPTIONS = {
 }
 DATADOG_HOSTNAME = os.environ.get('DATADOG_HOSTNAME')
 
+# Define the entire lifetime of the container.
+# Combined with docker `--restart=always`, allows to run the check periodically
+CONTAINER_LIFETIME = int(os.environ.get('CONTAINER_LIFETIME', 0))
+
 
 def setupLogger():
     logger = logging.getLogger()
@@ -82,7 +86,15 @@ def main():
         )
         dog.Metric.send(metric="pgo.login.uptime", points=0, host=DATADOG_HOSTNAME, tags=["auth:%s" % AUTH])
 
-    logging.info("metrics properly reported")
+    logging.info("Metrics properly reported")
+
+    if CONTAINER_LIFETIME:
+        extra_sleep = CONTAINER_LIFETIME - (time.time() - start)
+        if extra_sleep > 0:
+            logging.info("Sleeping an extra %.1f seconds" % extra_sleep)
+            time.sleep(extra_sleep)
+
+    logging.info("Exiting")
 
 if __name__ == "__main__":
     main()
