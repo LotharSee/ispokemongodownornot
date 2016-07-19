@@ -6,13 +6,21 @@ from datadog import initialize, api as dog
 from datadog.api.constants import CheckStatus
 
 # Has to run inside the `pogo` directory
-from pogo import api
-
+from pogo.api import createPTCSession, createGoogleSession
+from pogo.location import Location
 
 AUTH = os.environ.get('PGO_AUTH')
 USERNAME = os.environ.get('PGO_USERNAME')
 PASSWORD = os.environ.get('PGO_PASSWORD')
+
+
+# GPS location
+LATITUDE = float(os.environ.get('PGO_LATITUDE', 0))
+LONGITUDE = float(os.environ.get('PGO_LONGITUDE', 0))
+ALTITUDE = float(os.environ.get('PGO_ALTITUDE', 0))
+# Or searched location
 LOCATION = os.environ.get('PGO_LOCATION')
+
 
 DD_OPTIONS = {
     'api_key': os.environ.get('DATADOG_API_KEY'),
@@ -37,8 +45,11 @@ def setupLogger():
 
 def main():
     """Report to datadog the state of the Pokemon GO authentication with Google Auth"""
-    if not (AUTH and USERNAME and PASSWORD and LOCATION):
-        return
+
+    # Set the location, either a string we will search, or directly the exact coordinates
+    location = LOCATION
+    if (LATITUDE or LONGITUDE or ALTITUDE):
+        location = Location(LATITUDE, LONGITUDE, ALTITUDE)
 
     setupLogger()
     initialize(**DD_OPTIONS)
@@ -50,11 +61,12 @@ def main():
     session = None
     try:
         if AUTH == 'ptc':
-            session = api.createPTCSession(USERNAME, PASSWORD, LOCATION)
+            session = createPTCSession(USERNAME, PASSWORD, location)
         elif AUTH == 'google':
-            session = api.createGoogleSession(USERNAME, PASSWORD, LOCATION)
-    except Exception:
+            session = createGoogleSession(USERNAME, PASSWORD, location)
+    except Exception as e:
         logging.error("Failed to get session")
+        logging.exception(e)
 
     profile = None
     # If it succeed, get the profile
