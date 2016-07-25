@@ -78,6 +78,7 @@ def main():
             logging.error("Failed to get the profile")
 
     if profile:
+        logging.info("All went well, reporting OK")
         elapsed = time.time() - start
 
         dog.ServiceCheck.check(
@@ -90,6 +91,7 @@ def main():
         dog.Metric.send(metric="pgo.login.lag", points=elapsed, host=DATADOG_HOSTNAME, tags=["auth:%s" % AUTH])
 
     else:
+        logging.info("Something went wrong, reporting CRITICAL")
         dog.ServiceCheck.check(
             check="pgo.login.up",
             host_name=DATADOG_HOSTNAME,
@@ -97,8 +99,6 @@ def main():
             tags=["auth:%s" % AUTH],
         )
         dog.Metric.send(metric="pgo.login.uptime", points=0, host=DATADOG_HOSTNAME, tags=["auth:%s" % AUTH])
-
-    logging.info("Metrics properly reported")
 
     if CONTAINER_LIFETIME:
         extra_sleep = CONTAINER_LIFETIME - (time.time() - start)
