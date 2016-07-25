@@ -1,6 +1,6 @@
 FROM python:2-wheezy
 
-ENV GIT_REFERENCE a226795373da955752356e48e215a269473ead65
+ENV GIT_REFERENCE f7a97a7e1247b493cc8f12f5716bb8da12a64c08 
 
 RUN wget https://github.com/LotharSee/pokemongo-api/archive/$GIT_REFERENCE.tar.gz
 RUN tar xzf $GIT_REFERENCE.tar.gz
