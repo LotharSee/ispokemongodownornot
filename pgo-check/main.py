@@ -77,7 +77,7 @@ def main():
         except Exception:
             logging.error("Failed to get the profile")
 
-    if profile and getattr(profile, 'username', None):
+    if profile:
         elapsed = time.time() - start
 
         dog.ServiceCheck.check(
